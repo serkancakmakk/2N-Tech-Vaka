@@ -1,0 +1,80 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>Çalışan Bilgileri</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Adı Soyadı:</h5>
+                    <p>{{ personal.first_name }} {{ personal.last_name }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Telefon Numarası:</h5>
+                    <p>{{ personal.phone_number }}</p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Rol:</h5>
+                    <p>{{ personal.role }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>İşe Başlama Tarihi:</h5>
+                    <p>{{ personal.date_joined|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Adres:</h5>
+                    <p>{{ personal.address }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Kart Numarası:</h5>
+                    <p>{{ personal.card_number }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onaylanmış İzinler Bölümü -->
+    <div class="card mt-4">
+        <div class="card-header bg-success text-white">
+            <h4>Onaylanmış İzinler</h4>
+        </div>
+        <div class="card-body">
+            {% if approved_leaves %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>İzin Türü</th>
+                            <th>Başlangıç Tarihi</th>
+                            <th>Bitiş Tarihi</th>
+                            <th>Toplam Gün</th>
+                            <th>Neden</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for leave in approved_leaves %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ leave.get_leave_type_display }}</td>
+                            <td>{{ leave.start_date|date:"d/m/Y" }}</td>
+                            <td>{{ leave.end_date|date:"d/m/Y" }}</td>
+                            <td>{{ leave.total_days }}</td>
+                            <td>{{ leave.reason }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Onaylanmış izin bulunmamaktadır.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

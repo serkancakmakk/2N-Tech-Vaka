@@ -1,0 +1,53 @@
+{% extends '_base.html' %}
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Yeni İzin Talebi Oluştur</h1>
+        <h6 class="text-center mb-4">İzinler direkt onaylanmış olarak verilir.</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST" action="{% url 'leave_create' %}">
+                    {% csrf_token %}
+                    
+                    <!-- Çalışan Seçim Alanı -->
+                    <div class="form-group">
+                        <label for="employee" class="font-weight-bold">Çalışan Seçin</label>
+                        <select id="employee" name="employee" class="form-control">
+                            {% for employee in employees %}
+                                <option value="{{ employee.id }}">{{ employee.first_name }} {{ employee.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- İzin Türü -->
+                    <div class="form-group">
+                        <label for="leave_type" class="font-weight-bold">İzin Türü</label>
+                        <select id="leave_type" name="leave_type" class="form-control">
+                            {% for leave_type, leave_name in leave_types %}
+                                <option value="{{ leave_type }}">{{ leave_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Başlangıç Tarihi -->
+                    <div class="form-group">
+                        <label for="start_date" class="font-weight-bold">Başlangıç Tarihi</label>
+                        <input type="date" id="start_date" name="start_date" class="form-control">
+                    </div>
+
+                    <!-- Bitiş Tarihi -->
+                    <div class="form-group">
+                        <label for="end_date" class="font-weight-bold">Bitiş Tarihi</label>
+                        <input type="date" id="end_date" name="end_date" class="form-control">
+                    </div>
+
+                   
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg">İzin Talebi Oluştur</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

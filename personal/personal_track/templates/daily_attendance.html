@@ -1,0 +1,61 @@
+{% extends '_base.html' %}
+
+{% block title %}Günlük Yoklama{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Günlük Yoklama</h1>
+    
+    <!-- Tarih form -->
+    <form method="get" class="mb-3">
+        <label for="date" class="form-label">Tarih Seç:</label>
+        <input
+            type="date"
+            id="date"
+            name="date"
+            class="form-control"
+            value="{{ selected_date|date:'Y-m-d' }}"
+        >
+        <button type="submit" class="btn btn-primary mt-2">Göster</button>
+    </form>
+
+    <!-- Yoklama Tablosu -->
+    {% if daily_attendance %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ad Soyad</th>
+                    <th>Giriş Zamanı</th>
+                    <th>Çıkış Zamanı</th>
+                    <th>Geç Giriş Zamanı</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attendance in daily_attendance %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ attendance.employee.first_name }} {{ attendance.employee.last_name }} </td>
+                        <td>{{ attendance.check_in|date:'H:i' }}</td>
+                        <td>{{ attendance.check_out|date:'H:i' }}</td>
+                        {% if attendance.late_minutes > 0 %}
+                        <td 
+                         class="text-danger">
+                        <strong>
+                        {{ attendance.late_minutes }}
+                        </strong>
+                        </td>
+                        {% else %}
+                        <td>
+                       {{ attendance.late_minutes }}
+                       </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-warning">Seçilen tarihte giriş/çıkış kaydı bulunamadı.</p>
+    {% endif %}
+</div>
+{% endblock content %}

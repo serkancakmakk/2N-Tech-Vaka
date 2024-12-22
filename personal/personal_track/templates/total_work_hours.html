@@ -1,0 +1,54 @@
+{% extends '_base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container">
+
+<form method="get" class="mb-3">
+    <label for="year">Yıl:</label>
+    <select name="year" id="year" class="form-select">
+        {% for year in 2000|get_year_range %}
+        <option value="{{ year }}" {% if year|stringformat:"s" == selected_year|stringformat:"s" %}selected{% endif %}>
+            {{ year }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="month">Ay:</label>
+    <select name="month" id="month" class="form-select">
+        {% for month in 1|get_month_range %}
+        <option value="{{ month }}" {% if month|stringformat:"s" == selected_month|stringformat:"s" %}selected{% endif %}>
+            {{ month }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="btn btn-primary mt-2">Filtrele</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Çalışan Adı</th>
+            <th>Toplam Çalışma Saati ({{ selected_month }}/{{ selected_year }})</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in employees %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ employee.first_name }} {{ employee.last_name }} 
+            {% if employee.is_active == False %}
+                <strong style="color:red;">(Eski Çalışan)</strong>
+            {% endif %}
+                </td>
+            <td>{{ employee.total_work_hours|default:0|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    
+</div>
+{% endblock content %}
+    

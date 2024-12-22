@@ -1,0 +1,113 @@
+{% load static %}
+ <head>
+  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+</head>
+<style></style>
+<nav id="sidebar">
+  <ul>
+    <li>
+      <span class="logo">Personel Takip</span>
+      <button onclick=toggleSidebar() id="toggle-btn">
+        <i class='bx bxs-chevrons-left'></i>
+      </button>
+    </li>
+    <li>
+      <a href="{% url 'home' %}">
+        <i class='bx bxs-user' style="font-size: 24px;"></i>
+        <span>{{request.user.username}}</span>
+      </a> {% if user.role == 'Manager' %}
+    <li>
+      <a href="{% url 'attendance_status' %}">
+        <i class='bx bxs-door-open'></i>
+        <span>Giriş - Çıkış</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'daily_attendance' %}">
+        <i class='bx bxs-door-open'></i>
+        <span>Günlük Girişler</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'back_to_work' %}">
+        <i class='bx bxs-id-card'></i>
+        <span>Kart Okutma Sayfası</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'leave_create' %}">
+        <i class='bx bx-plus-medical'></i>
+        <span>İzin Tanımla</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'total_work_hours' %}">
+        <i class='bx bxs-bar-chart-alt-2'></i>
+        <span>Aylık Rapor</span>
+      </a>
+    </li>
+    <li>
+      <button onclick=toggleSubMenu(this) class="dropdown-btn">
+        <i class='bx bxs-folder-plus'></i>
+        <span>Tanımlar</span>
+        <i class='bx bxl-xing'></i>
+      </button>
+      <ul class="sub-menu">
+        <div>
+          <li>
+            <a href="{% url 'employees' %}">Çalışan</a>
+          </li>
+          <li>
+            <a href="{% url 'add_employee' %}">Çalışan Tanımla</a>
+          </li>
+        </div>
+      </ul>
+    </li>
+    <li>
+      <a href="{% url 'manager_logout' %}">
+        <i class='bx bx-exit'></i>
+        <span>Çıkış Yap</span>
+      </a>
+    </li> {% else %} <li>
+      <a href="{% url 'apply_for_leave' %}">
+        <i class='bx bxs-hand'></i>
+        <span>İzin İsteği</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'personal_logout' %}">
+        <i class='bx bx-exit'></i>
+        <span>Çıkış Yap</span>
+      </a>
+    </li> {% endif %}
+  </ul>
+</nav>
+<script>
+  const toggleButton = document.getElementById('toggle-btn')
+  const sidebar = document.getElementById('sidebar')
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('close')
+    toggleButton.classList.toggle('rotate')
+    closeAllSubMenus()
+  }
+
+  function toggleSubMenu(button) {
+    if (!button.nextElementSibling.classList.contains('show')) {
+      closeAllSubMenus()
+    }
+    button.nextElementSibling.classList.toggle('show')
+    button.classList.toggle('rotate')
+    if (sidebar.classList.contains('close')) {
+      sidebar.classList.toggle('close')
+      toggleButton.classList.toggle('rotate')
+    }
+  }
+
+  function closeAllSubMenus() {
+    Array.from(sidebar.getElementsByClassName('show')).forEach(ul => {
+      ul.classList.remove('show')
+      ul.previousElementSibling.classList.remove('rotate')
+    })
+  }
+</script>

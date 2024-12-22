@@ -1,0 +1,64 @@
+{% extends '_base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">{{today}} Tarihli</h1>
+        <!-- Kartını Okutmayanlar Tablosu -->
+        <h2 class="mb-3">Kartını Okutmayanlar</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Çalışan Adı</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in missing_check_ins %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ employee.first_name }} {{ employee.last_name }}</td>
+                        <td>Kart Okutulmamış</td>
+                    </tr>
+                {% endfor %}
+                
+                {% if missing_check_ins|length == 0 %}
+                    <tr>
+                        <td colspan="3" class="text-center">Tüm çalışanlar kart okuttu veya izinli.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- İzinli Olanlar Tablosu -->
+        <h2 class="mt-5 mb-3">İzinli Olanlar</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Çalışan Adı</th>
+                    <th>İzin Türü</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in approved_leaves %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ leave.employee.first_name }} {{ leave.employee.last_name }}</td>
+                        <td>{{ leave.leave_type }}</td>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.end_date }}</td>
+                    </tr>
+                {% endfor %}
+                
+                {% if approved_leaves|length == 0 %}
+                    <tr>
+                        <td colspan="5" class="text-center">Bugün izinli çalışan yok.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

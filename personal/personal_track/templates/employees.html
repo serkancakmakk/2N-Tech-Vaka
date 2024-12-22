@@ -1,0 +1,61 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <select id="status_filter" class="form-control mb-3">
+        <option value="active">Aktif Çalışanlar</option>
+        <option value="inactive">Pasif Çalışanlar</option>
+    </select>
+
+    <table id="employee_table" class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Adı Soyadı</th>
+                <th>Telefon Numarası</th>
+                <th>Rol</th>
+                <th>İşe Başlama Tarihi</th>
+                <th>Adres</th>
+                <th>Kart Numarası</th>
+                <th>Detaylar</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            // DataTables'ı başlat
+            var table = $('#employee_table').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    url: "{% url 'employee_list' %}",
+                    data: function(d) {
+                        d.status = $('#status_filter').val();
+                    }
+                },
+                "columns": [
+                    { "data": "id" },
+                    { "data": "full_name" },
+                    { "data": "phone_number" },
+                    { "data": "role" },
+                    { "data": "date_joined" },
+                    { "data": "address" },
+                    { "data": "card_number" },
+                    {
+                        "data": "id",
+                        "render": function(data, type, row, meta) {
+                            return `<a href="/employee/${data}/info/" class="btn btn-primary btn-sm">Detaylar</a>`;
+                        }
+                    }
+                ]
+            });
+            $('#status_filter').on('change', function() {
+                table.ajax.reload();
+            });
+        });
+    </script>
+</div>
+{% endblock content %}

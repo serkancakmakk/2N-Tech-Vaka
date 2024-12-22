@@ -1,0 +1,101 @@
+Metadata-Version: 2.1
+Name: fakers
+Version: 0.5.0
+Summary: A package that provides ready-made objects of fake-data.
+Author-email: ASHISH GARG <ashishgargmp@gmail.com>
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+Requires-Dist: Faker
+Requires-Dist: pandas
+Requires-Dist: pyspark
+Requires-Dist: pytest ; extra == "test"
+Requires-Dist: pytest-cov ; extra == "test"
+Provides-Extra: test
+
+# `fakers` Library
+***
+- __Author:__ Ashish Garg
+- __Year of release:__ 2024
+- __Description:__
+This generates pre-built container objects filled with fabricated data.
+
+<p align="center">
+  <b>Embrace the art of deception with our library—where faking it means making it!</b>
+</p>
+
+
+## How it helps?
+***
+If you need fake data that is structured in groups of fields, it typically requires additional time and effort. The `fakers` library solves this problem & saves you that extra time by providing pre-structured grouped fake data.
+
+
+## Version History
+***
+| Version        | Release                         | Description                                                                |
+|----------------|---------------------------------|----------------------------------------------------------------------------|
+| 0.5.0          | Latest release - (01 Apr, 2024) | Module `temperature device` available (no support for spark and pandas df) |
+| 0.1.0 to 0.4.0 | Initial releases                | Fake objects related to two modules were released - `Retail` and `Person`. |
+
+## Module description
+***
+### Temperature Device
+***
+This module provide you with the sensor device data particularly for temperature sensor. You can 
+generate single or multiple sensors.
+
+__Example:__ <br>
+```python
+import fakers
+
+sensor = fakers.TemperatureDevice.fake_device()
+fake_sensors = fakers.TemperatureDevice.fake_devices_event_pack(4)
+fake_sensor_event = fakers.TemperatureDevice.fake_device_event_pack()
+fake_sensors_event = fakers.TemperatureDevice.fake_devices_event_pack(5)
+```
+
+### Retail
+***
+This contains the fake objects related to the retail data and with relationship. For example:
+```python
+import fakers
+
+order = fakers.Retail.fake_order()
+fifteen_orders = fakers.Retail.fake_orders(15)
+user = fakers.Retail.fake_user()
+ten_users = fakers.Retail.fake_users(10)
+sale = fakers.Retail.fake_sale()
+three_sales = fakers.Retail.fake_sales(3)
+product = fakers.Retail.fake_product()
+two_products = fakers.Retail.fake_products(2)
+```
+
+### Person
+***
+This contains the fake objects related to the Person module. For example:
+```python
+import fakers
+
+fake_person = fakers.Person.fake_person()
+fake_persons = fakers.Person.fake_persons(10)
+fake_address = fakers.Person.fake_address()
+fake_addresses = fakers.Person.fake_addresses(100)
+```
+
+## Good to have features
+***
+💡 You can convert these objects directly to `Pandas` and `pyspark` dataframes. At present this is enabled
+only for two modules: `Person` & `Retail`. 
+
+The functions you use for it are:
+1. `to_pandas`
+2. `to_spark`
+
+Exmaple:
+
+```python
+import fakers
+import pandas as pd
+
+fake_user = fakers.Retail.fake_user()
+fake_user_df = fake_user.to_pandas()
+```

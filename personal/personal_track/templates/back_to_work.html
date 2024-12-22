@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kart Okutma Sayfası</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome Iconlar için -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap için -->
+</head>
+<body class="bg-light p-4">
+
+    <!-- Kart Okuma Formu -->
+    <div class="container">
+        <div class="card mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Çalışan Kart Okutma</h2>
+                <form id="cardForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="card_number" class="form-label">Kart Numarası</label>
+                        <input type="text" id="card_number" name="card_number" class="form-control" placeholder="Kart numarasını girin veya okutun">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        Kartı Okut
+                    </button>
+                </form>
+
+                <!-- Durum Mesajı -->
+                <div class="mt-4 text-center"><h5 id="statusMessage"></h5></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSRF token hidden input -->
+    <script>
+        // CSRF token'ı almak için
+        function getCSRFToken() {
+            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            return csrfToken;
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery kullanımı -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> <!-- Bootstrap JS -->
+    <script>
+        // CSRF token'ını almak için
+        function getCSRFToken() {
+            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            return csrfToken;
+        }
+    
+        $(document).ready(function() {
+            $('#cardForm').on('submit', function(e) {
+                e.preventDefault();  // Formun varsayılan submit işlemini engelle
+                var cardNumber = $('#card_number').val();
+    
+                // Kart numarası girilmedi mi kontrol et
+                if (!cardNumber) {
+                    $('#statusMessage').text('Kart numarasını girmeniz gerekiyor!').removeClass('text-success').addClass('text-danger');
+                    return;
+                }
+    
+                // CSRF token'ı almak
+                var csrfToken = getCSRFToken();
+    
+                // API'ye POST isteği gönder
+                $.ajax({
+                    url: '/api/card-check/',  // API endpoint adresi
+                    method: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRFToken': csrfToken // CSRF token'ı başlığa ekle
+                    },
+                    data: JSON.stringify({ "card_number": cardNumber }),
+                    success: function(response) {
+                        // Başarılı durumda mesaj göster
+                        var successMessage = response.message.toLowerCase();
+                        if (successMessage.includes('çıkış')) {
+                            $('#statusMessage').text(response.message).removeClass('text-success').addClass('text-danger');
+                        } else {
+                            $('#statusMessage').text(response.message).removeClass('text-danger').addClass('text-success');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Hata durumunda mesaj göster
+                        $('#statusMessage').text(xhr.responseJSON.error || 'Bir hata oluştu.').removeClass('text-success').addClass('text-danger');
+                    }
+                });
+            });
+        });
+    </script>
+    
+
+</body>
+</html>

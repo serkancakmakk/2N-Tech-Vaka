@@ -1,0 +1,55 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <!-- Card for the profile information -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">İzin Bilgileriniz</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Kullanıcı Bilgileri -->
+                    <div class="mb-3">
+                        <h5 class="mb-2">Çalışan Bilgileri:</h5>
+                        <p><strong>Adı:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                        <p><strong>Rol:</strong> {{ user.role }}</p>
+                        <p><strong>Telefon:</strong> {{ user.phone_number }}</p>
+                    </div>
+
+                    <!-- Yıllık İzin Bilgisi -->
+                    <div class="mb-3">
+                        <h5 class="mb-2">İzin Durumu:</h5>
+                        <p><strong>Kalan Yıllık İzin Günleri:</strong> {{ annual_leave_days }} gün</p>
+                        <p><strong>Kullanılan İzin Günleri:</strong> {{ total_leave_days.count }} gün</p>
+                    </div>
+
+                    <!-- İzin Başvurusu Yapma Butonu -->
+                    <form action="{% url 'apply_for_leave' %}" method="POST">
+                        {% csrf_token %}
+                        <label for="leave_type">İzin Türü</label>
+                        <select class="form-select" id="leave_type" name="leave_type">
+                            <option value="annual">Yıllık İzin</option>
+                            <option value="sick">Hastalık İzni</option>
+                        </select>
+                    
+                        <label for="start_date">Başlangıç Tarihi</label>
+                        <input class="form-control" type="date" id="start_date" name="start_date" required>
+                    
+                        <label for="end_date">Bitiş Tarihi</label>
+                        <input class="form-control" type="date" id="end_date" name="end_date" required>
+                    
+                        <button class="btn btn-success mt-4" type="submit">İzin Başvurusu Yap</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for message in messages  %}
+    <li>{{message}}</li>
+{% endfor %}
+    
+{% endblock content %}

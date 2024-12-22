@@ -1,0 +1,63 @@
+{% extends '_base.html' %}
+{% block title %}Kullanıcı Kaydı{% endblock %}
+{% block content %}
+<style>
+    #employeeform {
+        justify-content: center;
+    }
+</style>
+<div class="container mt-5">
+    <div class="row">
+        <!-- Sol Kolon -->
+        <div class="col-md-6">
+            <form method="POST" action="{% url 'add_employee' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Kullanıcı Adı</label>
+                    <input type="text" name="username" class="form-control" id="id_username">
+                </div>
+                <div class="mb-3">
+                    <label for="id_first_name" class="form-label">Ad</label>
+                    <input type="text" name="first_name" class="form-control" id="id_first_name">
+                </div>
+                <div class="mb-3">
+                    <label for="id_last_name" class="form-label">Soyad</label>
+                    <input type="text" name="last_name" class="form-control" id="id_last_name">
+                </div>
+                <div class="mb-3">
+                    <label for="id_address" class="form-label">Adres</label>
+                    <textarea name="address" class="form-control" id="id_address" rows="3"></textarea>
+                </div>
+        </div>
+
+        <!-- Sağ Kolon -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="id_role" class="form-label">Rol</label>
+                <select name="role" class="form-control" id="id_role">
+                    <option value="Employee">Çalışan</option>
+                    <option value="Manager">Yönetici</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="id_phone_number" class="form-label">Telefon Numarası</label>
+                <input type="text" name="phone_number" class="form-control" id="id_phone_number">
+            </div>
+            <div class="mb-3">
+                <label for="id_card_number" class="form-label">Kart Numarası</label>
+                <input type="text" name="card_number" class="form-control" id="id_card_number">
+            </div>
+            <div class="mb-3">
+                <label for="id_password1" class="form-label">Şifre</label>
+                <input type="password" name="password1" class="form-control" id="id_password1">
+            </div>
+            <div class="mb-3">
+                <label for="id_password2" class="form-label">Şifre Tekrarı</label>
+                <input type="password" name="password2" class="form-control" id="id_password2">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Kaydol</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

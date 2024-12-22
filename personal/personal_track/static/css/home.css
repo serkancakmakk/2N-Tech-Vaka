@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ol,
+ul {
+    padding: 0 !important;
+}
+
+.content {
+    margin-left: 10px;
+    padding: 20px;
+    width: 100%;
+}
+
+.card-header {
+    background-color: #91AC8F;
+    color: white;
+}
+
+.card-body {
+    background-color: #f9f9f9;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+}
+
+.overview-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.overview-box .box {
+    background-color: #91AC8F;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 18%;
+    /* Adjusted to fit 5 items in a row */
+    text-align: center;
+}
+
+.overview-box .box i {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.box {
+    margin: 4px;
+}
+
+@media (max-width: 767px) {
+    body {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+
+    }
+
+    /* Overview Box'ları alt alta yerleştir */
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .overview-box .box {
+        width: 100%;
+        /* Her kutu, ekran genişliğini kapsayacak şekilde genişler */
+        margin-bottom: 15px;
+        /* Aralarına biraz boşluk ekleyelim */
+    }
+
+    /* Tabloyu küçük ekranlarda daha rahat görünür yapmak için */
+    .table {
+        width: 100%;
+        font-size: 12px;
+        /* Küçük ekranlarda metni daha okunabilir yapalım */
+    }
+
+    .table th,
+    .table td {
+        padding: 8px;
+        /* Hücrelerin içeriğine biraz boşluk ekleyelim */
+    }
+
+    /* İçeriği daha küçük ekranlara uyacak şekilde hizalayalım */
+    .content {
+        margin-left: 0;
+        padding: 10px;
+    }
+
+    /* Card header'ı da küçültelim */
+    .card-header {
+        font-size: 1.2rem;
+    }
+
+    .card-body {
+        font-size: 1rem;
+    }
+}

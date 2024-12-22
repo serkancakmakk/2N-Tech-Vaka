@@ -1,0 +1,318 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+
+{% if request.user.role == 'Manager' %}
+<script src="{% static 'js/websocket.js' %}"></script>
+    
+{% endif %}
+
+    
+
+<div class="content">
+   
+    
+    
+{% if user.role == 'Manager' %}
+<!------------------------------------------------------------------------------------------------------------------------------------------
+                                                        MANAGER
+--------------------------------------------------------------------------------------------------------------------------------------------->
+        <div class="overview-box">
+            <div class="box">
+                <i class='bx bx-walk'></i>
+                <h4>İzin İstekleri</h4>
+                <p>{{total_leave_request.count}}</p>
+            </div>
+            <div class="box">
+                <i class='bx bx-user'></i>
+                <h4>Toplam Çalışan</h4>
+                <p>{{total_employee.count}}</p>
+            </div>
+            <div class="box" data-toggle="modal" data-target="#leaveModal">
+                <i class='bx bx-envelope'></i>
+                <h4>Yıllık İzni Azalanlar</h4>
+                <p>{{ employees_with_less_than_3_days_left.count }}</p>
+            </div>
+      
+        </div>
+        <table class="table table-bordered mt-4">
+            <h2 class="text-center">Günlük Giriş/Çıkış Takibi</h2>
+            <thead>
+                <tr>
+                    <th>Çalışan Adı</th>
+                    <th>Tarih</th>
+                    <th>Giriş Saati</th>
+                    <th>Çıkış Saati</th>
+                    <th>Geç Kalma (Dakika)</th>
+                    <th>Çalışılan Saat</th>
+                </tr>
+            </thead>
+            <tbody id="attendance-table-body">
+                <tr>
+                    <td colspan="6" class="text-center">Veriler yükleniyor...</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <div class="container">
+            <div class="row">
+                <div class="col-8">
+                    <h3>İzin Başvuruları</h3>
+        {% if page_obj %}
+            <table class="table text-center table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Çalışan</th>
+                        <th>İzin Türü</th>
+                        <th>Başlangıç Tarihi</th>
+                        <th>Bitiş Tarihi</th>
+                        <th>Durum</th>
+                        
+                        {% if user.role == 'Manager' %}
+                            <th>Kalan İzin</th>
+                            <th>Durum </th>
+                            <th>Güncelle</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in page_obj %}
+                        <tr>
+                            <td>{{ leave.employee.first_name }} {{ leave.employee.last_name }}</td>
+                            <td>{{ leave.leave_type|capfirst }}</td>
+                            <td>{{ leave.start_date|date:"d-m-Y" }}</td>
+                            <td>{{ leave.end_date|date:"d-m-Y" }}</td>
+                            <td>
+                                {% if leave.status == 'approved' %}
+                                    <span class="badge bg-success">Onaylı</span>
+                                {% elif leave.status == 'rejected' %}
+                                    <span class="badge bg-danger">Reddedildi</span>
+                                {% elif leave.status == 'pending' %}
+                                    <span class="badge bg-warning">Beklemede</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Bilinmiyor</span>
+                                {% endif %}
+                            </td>
+        
+                            {% if user.role == 'Manager' %}
+                                <td>{{ leave.employee.annual_leave_days }}</td>
+                                <td>
+                                    <form method="POST" action="{% url 'update_leave_status' leave.id %}" class="d-flex">
+                                        {% csrf_token %}
+                                        <select class="form-select" name="status">
+                                            <option value="approved" {% if leave.status == 'approved' %}selected{% endif %}>Onaylı</option>
+                                            <option value="pending" {% if leave.status == 'pending' %}selected{% endif %}>Beklemede</option>
+                                            <option value="rejected" {% if leave.status == 'rejected' %}selected{% endif %}>Reddedildi</option>
+                                        </select>
+                                   
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary ms-2" type="submit">Güncelle</button>
+                                </form>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Henüz izin başvurusu yapmadınız.</p>
+        {% endif %}
+        <!-- Sayfalama -->
+<nav aria-label="Sayfa gezintisi" class="d-flex justify-content-center mt-4">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="İlk">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Önceki">
+                    Önceki
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% endif %}
+
+        <!-- Sayfa numaraları -->
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Sonraki">
+                    Sonraki
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Son">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" aria-disabled="true">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+                </div>
+                <div class="col-4">
+                    <h5 class="mb-4">Yıllık İzni 3 Günden Az Kalan Çalışanlar</h5>
+                
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Çalışan Adı</th>
+                                    <th scope="col">Kullanılabilir İzin Gün Sayısı</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for employee_info in employees_with_less_than_3_days_left %}
+                                    <tr>
+                                        <td>{{ employee_info.first_name }} {{ employee_info.last_name }}</td>
+                                        <td>{{ employee_info.annual_leave_days }} gün</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="text-center">Yıllık izni 3 günden az kalan çalışan yok.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+
+       
+</div>
+
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tableBody = document.getElementById("attendance-table-body");
+    
+        // Verileri API'den al ve tabloyu güncelle
+        function fetchDailyAttendance() {
+            console.log('Veriler alınıyor...');
+            fetch('/api/daily-attendance/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Veriler alınamadı.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Veriler:', data);  // Veriyi konsola yazdır
+                    tableBody.innerHTML = ""; // Önce tabloyu temizle
+                    if (data.length === 0) {
+                        // Eğer veri yoksa boş mesaj göster
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="text-center">Bugün için giriş/çıkış kaydı bulunamadı.</td>
+                            </tr>
+                        `;
+                    } else {
+                        // Verileri tabloya ekle
+                        data.forEach(attendance => {
+                            const lateMinutesStyle = attendance.late_minutes > 0 ? 'color: red; font-weight: bold;' : '';
+                            const row = `
+                                <tr>
+                                    <td>${attendance.employee_name}</td>
+                                    <td>${attendance.date}</td>
+                                    <td>${attendance.check_in}</td>
+                                    <td>${attendance.check_out}</td>
+                                    <td style="${lateMinutesStyle}">${attendance.late_minutes}</td>
+                                    <td>${attendance.worked_hours.toFixed(2)}</td>
+                                </tr>
+                            `;
+                            tableBody.innerHTML += row;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center text-danger">Bir hata oluştu: ${error.message}</td>
+                        </tr>
+                    `;
+                });
+        }
+    
+        // Sayfa yüklendiğinde verileri getir
+        fetchDailyAttendance();
+    
+        // Her 10 saniyede bir tabloyu yenile
+        setInterval(fetchDailyAttendance, 10000);
+    });
+</script>  
+
+<!---------------------------------------------------------------------------------------------------
+                                                Employee
+----------------------------------------------------------------------------------------------------->
+{% if user.role == 'Employee' %}
+    <h2>İzin İstekleriniz</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>İzin Tipi</th>
+                <th>Başlangıç Tarihi</th>
+                <th>Bitiş Tarihi</th>
+                <th>Durumu</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leaves %}
+                <tr>
+                    <td>{{ leave.get_leave_type_display|title }}</td>
+                    <td>{{ leave.start_date }}</td>
+                    <td>{{ leave.end_date }}</td>
+                    <td>
+                        {% if leave.status == 'approved' %}
+                            <span class="badge bg-success">{{ leave.get_status_display }}</span>
+                        {% elif leave.status == 'pending' %}
+                            <span class="badge bg-warning">{{ leave.get_status_display }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">{{ leave.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No leave requests found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </table>
+
+
+{% endif %}
+{% endblock content %}
+    
