@@ -433,18 +433,12 @@ def manager_login(request):
         else:
             messages.error(request, "Geçersiz kimlik bilgileri veya yetki yok.")
     return render(request, "login/manager_login.html")
-
-
 def personal_logout(request):
     logout(request)
     return redirect("personal_login")
-
-
 def manager_logout(request):
     logout(request)
     return redirect("manager_login")
-
-
 def personal_leaves(request):
     employee = Employee.objects.get(id=request.user.id)
     total_leave_days = Leave.objects.filter(employee=employee, status="approved")
@@ -458,8 +452,6 @@ def personal_leaves(request):
             
         },
     )
-
-
 # İzin başvurusu yapma
 def apply_for_leave(request):
     """
